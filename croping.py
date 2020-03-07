@@ -2,33 +2,30 @@ import cv2
 import numpy as np
 import os
 from matplotlib import pyplot as plt
-from multiprocessing import Pool
+import pytesseract
+from pytesseract import Output
+DATA_DIR = "./Training Data Set/1st Step/2.jpg"  # The directory where the script looks for dataset
 
-DATA_DIR = "./Training Data Set/"  # The directory where the script looks for dataset
-CLASSES = ["1st Step", "Annavillas"]
-training_set = []  # list to store traing set
+img = cv2.imread(DATA_DIR, 0)
 
+if img.shape[0] < img.shape[1]:
+    img = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
+img = img[0:int(img.shape[0]/3), :]
+img = cv2.GaussianBlur(img, (3, 3), 0)
 
-# Looping through each class
-for Class in CLASSES:
-    path = os.path.join(DATA_DIR, Class)
-    class_num = CLASSES.index(Class)
-     # Looping through each image
-    for img in os.listdir(path):
-         # Try catch block to avoid errors cause by broken image or format:
-        try:
-            arr = cv2.imread(os.path.join(path, img), 0)
-            dim = arr.shape
-            if dim[0] < dim[1]:
-               img_arr = cv2.rotate(arr, cv2.ROTATE_90_CLOCKWISE)
-            img_arr = img_arr[0:int(img_arr.shape[1]/4), :]
-            cv2.imshow("gg", img_arr)
-            cv2.waitKey(0)
-            training_set.append([img_arr, class_num])
+d = pytesseract.image_to_data(img, output_type=Output.DICT)
+words = int()
+print(d.keys())
+for i in range(len(d['text'])):
+    if len(d['text'][i]) > 2:
+        words = i
+        break
+print(words)
+print(d['text'][words])
+(x, y, w, h) = (d['left'][words], d['top'][words], d['width'][words], d['height'][words])
+print(x, y, w, h)
+img = img[y:y+h, :]
 
-
-
-        except:
-                # print("Invalid image type or directory")
-            pass
-
+cv2.rectangle(img, (x, y), (x+w, y+h), (0, 0, 0), 10)
+cv2.imshow("ad", img)
+cv2.waitKey(0)
