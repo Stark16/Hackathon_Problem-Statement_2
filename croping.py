@@ -40,8 +40,8 @@ for Class in CLASSES:
             #print(path)
             training_set.append([img, class_num])
             #cv2.rectangle(img, (x, y), (x+w, y+h), (0, 0, 0), 10)
-            #cv2.imshow("ad", img)
-            #cv2.waitKey(0)
+            cv2.imshow("ad", img)
+            cv2.waitKey(0)
             print("working")
         except:
             pass
