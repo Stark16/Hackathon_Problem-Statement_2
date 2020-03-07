@@ -6,12 +6,12 @@ import random
 import os
 import cv2
 import pickle
-
+import pytesseract
+from pytesseract import Output
 
 DATA_DIR = "./Training Data Set/"  # The directory where the script looks for dataset
 CLASSES = ["1st Step", "Annavillas", "Archies", "Bata", "Belgian Waffle", "Big Bazaar", "Burger King", "Cold Stone Creamery", "Croma", "Dominos"]
 training_set = []  # list to store traing set
-
 
 def pipeline():
     # Looping through each class
@@ -27,7 +27,9 @@ def pipeline():
                 dim = arr.shape
                 if dim[0] < dim[1]:
                     img_arr = cv2.rotate(arr, cv2.ROTATE_90_CLOCKWISE)
-                img_arr = img_arr[0:int(img_arr.shape[1] / 4), :]
+                img_arr = img_arr[0:int(img_arr.shape[1] / 3), :]
+                img_arr = cv2.GaussianBlur(img_arr, (3, 3), 0)
+                d = pytesseract.image_to_data(img, output_type=Output.DICT)
                 #cv2.imshow("gg", img_arr)
                 #cv2.waitKey(0)
                 training_set.append([img_arr, class_num])
